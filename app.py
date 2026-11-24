@@ -29,7 +29,8 @@ else:
     if raw.empty:
         st.error(f"Snapshot {choice['id'][:8]} has no bars for {symbol}. Select another snapshot or re-import.")
         st.stop()
-    st.info(f"Historical snapshot · {choice['source']} · retrieved {choice['fetched']}")
+    fetched = pd.Timestamp(choice["fetched"]).tz_convert("UTC")
+    st.info(f"Historical snapshot · {choice['source']} · retrieved {fetched:%d %b %Y %H:%M} UTC")
 
 full = indicators(raw)
 window = st.sidebar.selectbox("Visible sessions", [30, 60, 120, "All"], index=1)

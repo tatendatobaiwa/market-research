@@ -1,3 +1,4 @@
+import re
 from datetime import date
 from streamlit.testing.v1 import AppTest
 from market import data, store
@@ -24,6 +25,7 @@ def test_historical_screen_with_mock_snapshot(monkeypatch,tmp_path):
     app.radio[0].set_value("Historical snapshots").run()
     assert not app.exception
     assert "IEX" in app.info[0].value and app.metric[0].value != "Warming up"
+    assert re.search(r"retrieved \d{2} \w{3} \d{4} \d{2}:\d{2} UTC$", app.info[0].value)
 
 
 def test_snapshot_missing_symbol(monkeypatch,tmp_path):

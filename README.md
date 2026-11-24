@@ -59,7 +59,7 @@ A short snapshot shows warm-up gaps. An EMA calculated from a different starting
 
 ## Verification and scope
 
-Milestone verification used Python 3.12, pytest, Streamlit AppTest and a local HTTP health check. All 20 automated cases passed. Streamlit emitted an upstream Altair deprecation warning. Authentication against Alpaca remains unverified because this run had no credentials. Tests use constructed bars and mock paginated responses. Browser visual inspection was blocked by the execution environment's Chromium socket restrictions.
+Milestone verification used Python 3.12, pytest, Streamlit AppTest and a local HTTP health check. All 23 automated cases passed. Streamlit emitted an upstream Altair deprecation warning. Authentication against Alpaca remains unverified because this run had no credentials. Tests use constructed bars and mock paginated responses. Browser visual inspection was blocked by the execution environment's Chromium socket restrictions.
 
 Research notes, data rights, calendar assumptions, evidence limits, Botswana instruments and the proposed out-of-sample evaluation are in [docs/research.md](docs/research.md). Modeling, cost-aware backtests, the paper ledger and broker connectivity are later milestones.
 
