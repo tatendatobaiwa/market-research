@@ -27,6 +27,21 @@ export APCA_API_KEY_ID APCA_API_SECRET_KEY
 python -m market.ingest --start 2024-01-02 --end 2024-12-31
 ```
 
+In Windows PowerShell, with the virtual environment activated, the commands below prompt for both values. The secret stays hidden as you type, and neither value reaches the command history.
+
+```powershell
+$env:APCA_API_KEY_ID = Read-Host 'Paper key ID'
+$secret = Read-Host 'Paper secret' -AsSecureString
+$env:APCA_API_SECRET_KEY = [Runtime.InteropServices.Marshal]::PtrToStringBSTR(
+    [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secret))
+Remove-Variable secret
+python -m market.ingest --start 2024-01-02 --end 2024-12-31
+```
+
+The variables last only for that PowerShell window. Avoid `setx`, which stores them permanently in the user profile.
+
+Alternatively, put `APCA_API_KEY_ID=...` and `APCA_API_SECRET_KEY=...` on separate lines of a `.env` file in the project directory, then run only the `python -m market.ingest` line. Git ignores `.env`. Values already set in the shell take precedence over the file. The file stores the secret unencrypted, so keep it private.
+
 Both dates are inclusive New York dates. Imports stop before the current New York day. Refresh the dashboard and select **Historical snapshots**. Each immutable snapshot covers the entire requested range. To extend it, rerun with the original start and a later end date. Select an older snapshot to reproduce a previous view. Identical data for the same request reuses its first retrieval timestamp. Updates are manual.
 
 By default both processes use `data/market.sqlite` relative to the project directory. For another path, pass `--db` to the CLI and set `MARKET_DB` to the same path for the dashboard. Keep this database private. The local dashboard binds to loopback.

@@ -32,6 +32,28 @@ def test_cli_reports_failure_without_saving(monkeypatch, tmp_path, capsys):
     assert not path.exists()
 
 
+def test_env_file_supplies_missing_credentials_only(monkeypatch, tmp_path):
+    monkeypatch.setenv("APCA_API_KEY_ID", "")
+    monkeypatch.delenv("APCA_API_KEY_ID")
+    monkeypatch.setenv("APCA_API_SECRET_KEY", "from-shell")
+    env = tmp_path / ".env"
+    env.write_text('﻿# comment\nAPCA_API_KEY_ID = "file-id"\nAPCA_API_SECRET_KEY=file-secret\nOTHER=x\n',
+                   encoding="utf-8")
+    ingest.load_env(env)
+    assert ingest.os.environ["APCA_API_KEY_ID"] == "file-id"
+    assert ingest.os.environ["APCA_API_SECRET_KEY"] == "from-shell"
+    assert "OTHER" not in ingest.os.environ
+    ingest.load_env(tmp_path / "missing.env")
+
+
+def test_env_file_is_ignored_by_git():
+    import subprocess
+    result = subprocess.run(["git", "check-ignore", "-q", ".env"], capture_output=True)
+    if result.returncode == 128:
+        pytest.skip("not a git checkout")
+    assert result.returncode == 0
+
+
 def test_cli_rejects_malformed_date(monkeypatch):
     with pytest.raises(SystemExit) as exit_info:
         run(monkeypatch, "--start", "2024/01/02", "--end", "2024-06-28")
