@@ -47,8 +47,13 @@ def test_env_file_supplies_missing_credentials_only(monkeypatch, tmp_path):
 
 
 def test_env_file_is_ignored_by_git():
+    import shutil
     import subprocess
-    result = subprocess.run(["git", "check-ignore", "-q", ".env"], capture_output=True)
+    git = shutil.which("git")
+    if git is None:
+        pytest.skip("git is not on PATH")
+    result = subprocess.run([git, "check-ignore", "-q", ".env"], capture_output=True,
+                            cwd=ingest.ENV_FILE.parent)
     if result.returncode == 128:
         pytest.skip("not a git checkout")
     assert result.returncode == 0
